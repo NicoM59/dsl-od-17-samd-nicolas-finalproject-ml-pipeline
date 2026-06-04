@@ -37,6 +37,10 @@ from sklearn.pipeline import Pipeline
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, f1_score, recall_score
 from sklearn.preprocessing import FunctionTransformer
 
+# Cette mini-fonction force la conversion de chaque élément en string
+def force_string_input(X):
+    return [str(text) for text in X]
+
 try:
     mlflow.end_run()
 except:
@@ -70,15 +74,13 @@ def create_pipeline():
         'Anxiety': 0.8396349413298566,
         'ADHD': 0.8039950062421972
     }
-    # Cette mini-fonction force la conversion de chaque élément en string
-    def force_string_input(X):
-        return [str(text) for text in X]
-
+    # 🌟 On passe directement la fonction globale force_string_input ici
     return Pipeline([
-        ("force_str", FunctionTransformer(force_string_input, validate=False)), # 🌟 LA SÉCURITÉ ICI
+        ("force_str", FunctionTransformer(force_string_input, validate=False)),
         ("tfidf", TfidfVectorizer(ngram_range=(1, 2), max_features=50000, sublinear_tf=True)),
         ("clf", LinearSVC(class_weight=custom_weights, random_state=42))
     ])
+    
 print("🏋️‍♂️ Création du pipeline terminée...")
 # 🌟 TOUTE LA LOGIQUE D'EXÉCUTION ET DE TRACKING EFFECTIVE ICI
 if __name__ == "__main__":

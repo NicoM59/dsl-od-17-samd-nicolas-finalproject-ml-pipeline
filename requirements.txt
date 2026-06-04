@@ -1,16 +1,23 @@
-# Data & ML
+# 📊 Data & ML Core
 pandas
 numpy
 scikit-learn
 boto3
 python-dotenv
 
-# Extensions Cloud pour Pandas (Ce qu'on ajoute !)
+# ☁️ Extensions Cloud pour Pandas (Lecture S3)
 fsspec
 s3fs
 
-# MLOps Tracking
+# 📈 MLOps Tracking & Registry
 mlflow
 
-# QA & Tests
+# ⚡ Exposition API (FastAPI)
+fastapi
+uvicorn
+pydantic
+watchfiles
+
+# 🧪 QA, Tests & Inférence Client
 pytest
+httpx
