@@ -36,7 +36,7 @@ jobs:
       - name: 🧠 Tester le Modèle et le Preprocessing
         # Ici, remplace "tests/test_model.py" par le nom de ton ancien fichier de test
         run: |
-          pytest tests/test_model.py -v
+          pytest tests/test_pipeline.py -v
 
       # ----------------------------------------------------------------------
       # 🌐 PHASE 2 : Les tests de l'API FastAPI

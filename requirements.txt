@@ -19,5 +19,5 @@ pydantic
 watchfiles
 
 # 🧪 QA, Tests & Inférence Client
-pytest
-httpx
+pytest>=7.0.0
+httpx>=0.23.0
