@@ -3,25 +3,28 @@
 
 import os
 import sys
+import shutil
+import pickle
+import argparse
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.preprocessing import FunctionTransformer
+from sklearn.svm import LinearSVC
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, f1_score, recall_score
+import joblib  # 🌟 Utilisation de joblib pour une meilleure sérialisation
 
 # ==============================================================================
 # 🛠️ SÉCURITÉ ABSOLUE POUR LES CHEMINS EN ENVIRONNEMENT LINUX / CI-CD
-# On calcule dynamiquement le chemin absolu de la racine du projet (pipeline-ml)
-# et on force Python à le mettre en priorité numéro 1.
 # ==============================================================================
-current_dir = os.path.dirname(os.path.abspath(__file__)) # Dossier 'app'
-project_root = os.path.abspath(os.path.join(current_dir, "..")) # Dossier parent racine
-
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(current_dir, ".."))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 # ==============================================================================
 
-# Maintenant, l'import fonctionnera PARTOUT, même si GitHub Actions fait n'importe quoi !
-from app.preprocess import clean_body_text, map_canonical_category 
-
-import argparse
-import pickle
-import shutil
 
 # --- SÉCURITÉ SYSTÈME ABSOLUE ---
 # Use explicit import to satisfy linters: python-dotenv exposes load_dotenv
@@ -170,15 +173,15 @@ def create_pipeline():
         'ADHD': 0.8039950062421972
     }
     # 🌟 On passe directement la fonction globale force_string_input ici
-    return Pipeline([
-        ("tfidf", sklearn.feature_extraction.text.TfidfVectorizer(
-            ngram_range=(1, 2), 
-            max_features=50000, 
+     return Pipeline([
+        ("force_string", FunctionTransformer(force_string_input)),
+        ("tfidf", TfidfVectorizer(
+            ngram_range=(1, 2),
+            max_features=50000,
             sublinear_tf=True,
-            # 🌟 LA MAGIE EST ICI : On force la conversion en string de TOUT ce qui entre dans le TF-IDF
             preprocessor=tfidf_anti_float_preprocessor
         )),
-        ("clf", sklearn.svm.LinearSVC(class_weight=custom_weights, random_state=42))
+        ("clf", LinearSVC(class_weight=custom_weights, random_state=42))
     ])
     
 print("🏋️‍♂️ Création du pipeline terminée...")
