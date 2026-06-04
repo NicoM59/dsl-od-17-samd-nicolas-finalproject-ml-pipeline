@@ -1,9 +1,22 @@
-import sys
+app/train.py
 import os
-root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-if root_path not in sys.path:
-    sys.path.insert(0, root_path)
-from app.preprocess import clean_body_text, map_canonical_category #on fait appel à preprocess.py dans le repo
+import sys
+
+# ==============================================================================
+# 🛠️ SÉCURITÉ ABSOLUE POUR LES CHEMINS EN ENVIRONNEMENT LINUX / CI-CD
+# On calcule dynamiquement le chemin absolu de la racine du projet (pipeline-ml)
+# et on force Python à le mettre en priorité numéro 1.
+# ==============================================================================
+current_dir = os.path.dirname(os.path.abspath(__file__)) # Dossier 'app'
+project_root = os.path.abspath(os.path.join(current_dir, "..")) # Dossier parent racine
+
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+# ==============================================================================
+
+# Maintenant, l'import fonctionnera PARTOUT, même si GitHub Actions fait n'importe quoi !
+from app.preprocess import clean_body_text, map_canonical_category 
+
 import argparse
 import pickle
 import shutil
