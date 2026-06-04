@@ -53,11 +53,10 @@ def load_and_preprocess_data(path_or_url):
     df['category'] = df['category'].apply(map_canonical_category)
     
     df = df.dropna(subset=['category'])
-    return df['body'], df['category']
-print("📥 Chargement & preprocessing terminé")
+    mlflow_dataset = mlflow.data.from_pandas(df, source=path_or_url, name="mental_health_disorder_detection")
+    return df['body'], df['category'], mlflow_dataset
 
-# Convertir le DataFrame Pandas en Dataset MLflow
-mlflow_dataset = mlflow.data.from_pandas(df, source=args.data_url, name="Mental_Health_Clinics")
+print("📥 Chargement & preprocessing terminé")
 
 def create_pipeline():
     print(f"🌟Application des poids de classe")
@@ -95,7 +94,7 @@ if __name__ == "__main__":
 
     # PHASE 1 : Entraînement pur (100% déconnecté de MLflow)
     print("📥 [LOG CI] Début du téléchargement des données depuis S3...")
-    X, y = load_and_preprocess_data(args.data_url)
+    X, y,mlflow_dataset = load_and_preprocess_data(args.data_url)
     print(f"📊 [LOG CI] Données chargées avec succès ! Taille du dataset : {len(X)} lignes.")
     
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
@@ -126,6 +125,7 @@ if __name__ == "__main__":
 
     # PHASE 2 : Archivage final STRICTEMENT contrôlé
     with mlflow.start_run(run_name="mental_health_svc_tuning_3") as run:
+        mlflow.log_input(mlflow_dataset, context="training")
         # 📝 A. Remplir la colonne DESCRIPTION
         mlflow.set_tag("mlflow.note.content", "Pipeline SVC entraîné via l'automatisation GitHub Actions après validation de la CI.")
         
@@ -133,8 +133,8 @@ if __name__ == "__main__":
         try:
             # On recrée un mini-dataframe temporaire pour le notifier à MLflow
             summary_df = pd.DataFrame({"body": X, "category": y})
-            mlflow_dataset = mlflow.data.from_pandas(summary_df, source=args.data_url, name="Mental_Health_Dataset")
-            mlflow.log_input(mlflow_dataset, context="training")
+            mlflow_dataset = mlflow.data.from_pandas(summary_df, source=args.data_url, name="mental_health_disorder_detection")
+            
             print("✅ Dataset notifié avec succès dans MLflow.")
         except Exception as e:
             print(f"⚠️ Impossible de loguer le dataset : {e}")
