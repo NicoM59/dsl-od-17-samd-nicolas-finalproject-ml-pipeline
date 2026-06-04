@@ -26,7 +26,7 @@ def test_home_endpoint(client):
 
 def test_predict_valid_text(client):
     """Vérifie qu'une phrase valide renvoie bien une prédiction."""
-    payload = {"text": "Je me sens très stressé et fatigué ces derniers temps."}
+    payload = {"text": "I feel quite stressed and tired lately."}
     response = client.post("/predict", json=payload)
     
     assert response.status_code == 200

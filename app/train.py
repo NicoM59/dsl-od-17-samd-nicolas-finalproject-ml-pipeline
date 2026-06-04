@@ -15,6 +15,7 @@ from sklearn.svm import LinearSVC
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, f1_score, recall_score
 import joblib  # 🌟 Utilisation de joblib pour une meilleure sérialisation
+from app.preprocess import clean_body_text, map_canonical_category
 
 # ==============================================================================
 # 🛠️ SÉCURITÉ ABSOLUE POUR LES CHEMINS EN ENVIRONNEMENT LINUX / CI-CD
