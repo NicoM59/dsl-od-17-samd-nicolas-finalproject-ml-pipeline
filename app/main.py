@@ -19,7 +19,12 @@ load_dotenv()
 def tfidf_anti_float_preprocessor(x):
     return str(x) if not isinstance(x, str) else x
 
+def force_string_input(X):
+    return [str(text) for text in X]
+
+# On force l'injection des deux fonctions dans le cerveau principal de Python
 sys.modules['__main__'].tfidf_anti_float_preprocessor = tfidf_anti_float_preprocessor
+sys.modules['__main__'].force_string_input = force_string_input
 # ==============================================================================
 
 # ==============================================================================
