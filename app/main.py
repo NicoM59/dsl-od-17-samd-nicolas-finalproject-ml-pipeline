@@ -5,6 +5,7 @@ from io import BytesIO
 import joblib
 import hashlib
 import mlflow
+import numpy as np
 from mlflow.tracking import MlflowClient
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -137,11 +138,26 @@ def predict(payload: PredictionInput):
         raise HTTPException(status_code=400, detail="Texte vide.")
 
     try:
+        # 1. Prédiction
         prediction = model.predict([payload.text])
+        
+        # 2. Calcul du score de confiance (Sigmoïde)
+        # decision_function donne la distance à la frontière de décision
+        raw_scores = model.decision_function([payload.text])
+        max_score = np.max(raw_scores)
+        
+        # Fonction sigmoïde : 1 / (1 + exp(-x))
+        # Cela transforme la distance en probabilité (0 à 1)
+        probability = 1 / (1 + np.exp(-max_score))
+        
+        # Conversion en pourcentage entier (0 à 100)
+        conf_percentage = int(probability * 100)
+
         return {
             "input_text": payload.text,
             "predicted_disorder": str(prediction[0]),
+            "probability": conf_percentage, # On envoie le pourcentage
             "status": "success"
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erreur interne : {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
