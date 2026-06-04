@@ -75,22 +75,30 @@ def create_pipeline():
 print("🏋️‍♂️ Création du pipeline terminée...")
 # 🌟 TOUTE LA LOGIQUE D'EXÉCUTION ET DE TRACKING EFFECTIVE ICI
 if __name__ == "__main__":
+    print("🚀 [LOG CI] Le script train.py vient de démarrer avec succès !")
+    
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_url", type=str, default="s3://dsl-od-17-samd-nicolas-finalproject/Mental Health Disorder Detection Dataset.csv")
     args = parser.parse_args()
 
     # 🔐 CONFIGURATION MLFLOW SÉCURISÉE : Uniquement lue lors de l'entraînement, pas pendant les tests Pytest !
     MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "http://13.39.248.239:5000")
+    
+    print(f"📡 [LOG CI] Tentative de connexion à MLflow sur : {MLFLOW_TRACKING_URI}...")
     mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
     mlflow.set_experiment("mental_health_svc_final_demo")
+    print("✅ [LOG CI] Connexion MLflow initialisée (ou mise en attente).")
     
     print(f"🎯 CIBLE MLFLOW : {mlflow.get_tracking_uri()}")
 
     # PHASE 1 : Entraînement pur (100% déconnecté de MLflow)
+    print("📥 [LOG CI] Début du téléchargement des données depuis S3...")
     X, y = load_and_preprocess_data(args.data_url)
+    print(f"📊 [LOG CI] Données chargées avec succès ! Taille du dataset : {len(X)} lignes.")
+    
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
 
-    print("🏋️‍♂️ Lancement du GridSearchCV...")
+    print("🏋️‍♂️ Lancement du GridSearchCV...Merci de patienter")
     grid = GridSearchCV(create_pipeline(), {"clf__C": [0.5, 1.0]}, cv=3, scoring="f1_macro", n_jobs=-1, verbose=2)
     grid.fit(X_train, y_train)
     
