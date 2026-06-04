@@ -35,7 +35,6 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.svm import LinearSVC
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, f1_score, recall_score
-from sklearn.preprocessing import FunctionTransformer
 
 # Cette mini-fonction force la conversion de chaque élément en string
 def force_string_input(X):
@@ -76,8 +75,13 @@ def create_pipeline():
     }
     # 🌟 On passe directement la fonction globale force_string_input ici
     return Pipeline([
-        ("force_str", FunctionTransformer(force_string_input, validate=False)),
-        ("tfidf", TfidfVectorizer(ngram_range=(1, 2), max_features=50000, sublinear_tf=True)),
+        ("tfidf", TfidfVectorizer(
+            ngram_range=(1, 2), 
+            max_features=50000, 
+            sublinear_tf=True,
+            # 🌟 LA MAGIE EST ICI : On force la conversion en string de TOUT ce qui entre dans le TF-IDF
+            preprocessor=lambda x: str(x) if not isinstance(x, str) else x
+        )),
         ("clf", LinearSVC(class_weight=custom_weights, random_state=42))
     ])
     
@@ -132,7 +136,7 @@ if __name__ == "__main__":
     print("=========================================================================\n")
 
     # PHASE 2 : Archivage final STRICTEMENT contrôlé
-    with mlflow.start_run(run_name="mental_health_svc_tuning_3") as run:
+    with mlflow.start_run(run_name="mental_health_svc_tuning_demo_final") as run:
         mlflow.log_input(mlflow_dataset, context="training")
         # 📝 A. Remplir la colonne DESCRIPTION
         mlflow.set_tag("mlflow.note.content", "Pipeline SVC entraîné via l'automatisation GitHub Actions après validation de la CI.")
