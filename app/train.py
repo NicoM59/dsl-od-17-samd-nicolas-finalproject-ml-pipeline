@@ -55,7 +55,9 @@ def load_and_preprocess_data(path_or_url):
     df = df.dropna(subset=['category'])
     return df['body'], df['category']
 print("📥 Chargement & preprocessing terminé")
-    
+
+# Convertir le DataFrame Pandas en Dataset MLflow
+mlflow_dataset = mlflow.data.from_pandas(df, source=args.data_url, name="Mental_Health_Clinics")
 
 def create_pipeline():
     print(f"🌟Application des poids de classe")
@@ -124,6 +126,19 @@ if __name__ == "__main__":
 
     # PHASE 2 : Archivage final STRICTEMENT contrôlé
     with mlflow.start_run(run_name="mental_health_svc_tuning_3") as run:
+        # 📝 A. Remplir la colonne DESCRIPTION
+        mlflow.set_tag("mlflow.note.content", "Pipeline SVC entraîné via l'automatisation GitHub Actions après validation de la CI.")
+        
+        # 📊 B. Remplir la colonne DATASET (Reconstitution propre à la volée)
+        try:
+            # On recrée un mini-dataframe temporaire pour le notifier à MLflow
+            summary_df = pd.DataFrame({"body": X, "category": y})
+            mlflow_dataset = mlflow.data.from_pandas(summary_df, source=args.data_url, name="Mental_Health_Dataset")
+            mlflow.log_input(mlflow_dataset, context="training")
+            print("✅ Dataset notifié avec succès dans MLflow.")
+        except Exception as e:
+            print(f"⚠️ Impossible de loguer le dataset : {e}")
+
         print(f"✅ Envoi des données dans l'unique Run ID : {run.info.run_id}")
         
         # 1. Hyperparamètres et Métriques
@@ -175,6 +190,14 @@ run_id: {run.info.run_id}
         print("📦 Envoi du modèle sur S3...")
         # On logue le dossier complet comme l'artefact "model"
         mlflow.log_artifacts(model_dir, artifact_path="model")
+
+        # 🤖 C. Remplir la colonne MODELS (Enregistrement officiel dans le registre)
+        try:
+            model_uri = f"runs:/{run.info.run_id}/model"
+            mlflow.register_model(model_uri, "MentalHealth_LinearSVC")
+            print("✅ Modèle enregistré avec succès dans le Model Registry.")
+        except Exception as e:
+            print(f"⚠️ Impossible d'enregistrer le modèle dans le registre : {e}")
         
         # Nettoyage local du dossier temporaire
         try:
