@@ -173,7 +173,7 @@ def create_pipeline():
         'ADHD': 0.8039950062421972
     }
     # 🌟 On passe directement la fonction globale force_string_input ici
-     return Pipeline([
+    return Pipeline([
         ("force_string", FunctionTransformer(force_string_input)),
         ("tfidf", TfidfVectorizer(
             ngram_range=(1, 2),
