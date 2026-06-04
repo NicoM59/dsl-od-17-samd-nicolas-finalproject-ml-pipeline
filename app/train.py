@@ -1,4 +1,4 @@
-from app.preprocess import clean_body_text, map_canonical_category #on fait appel à preprocess.py dans le repo
+from preprocess import clean_body_text, map_canonical_category #on fait appel à preprocess.py dans le repo
 import argparse
 import os
 import pickle
@@ -29,6 +29,7 @@ def load_and_preprocess_data(path_or_url):
     print(f"📥 Chargement : {path_or_url}")
     df = pd.read_csv(path_or_url)
     
+    print("📥 Appel de preprocess.py")
     # Étape de nettoyage qui utilise les fonctions déportées
     df = df.dropna(subset=['body', 'category']).copy()
     df['body'] = df['body'].apply(clean_body_text)
@@ -36,8 +37,11 @@ def load_and_preprocess_data(path_or_url):
     
     df = df.dropna(subset=['category'])
     return df['body'], df['category']
+print("📥 Chargement & preprocessing terminé")
+    
 
 def create_pipeline():
+    print(f"🌟Application des poids de classe")
     custom_weights = {
         'schizophrenia': 2.1384418901660283,
         'Depression': 1.1239092495636998,
@@ -51,7 +55,7 @@ def create_pipeline():
         ("tfidf", TfidfVectorizer(ngram_range=(1, 2), max_features=50000, sublinear_tf=True)),
         ("clf", LinearSVC(class_weight=custom_weights, random_state=42))
     ])
-
+print("🏋️‍♂️ Création du pipeline terminée...")
 # 🌟 TOUTE LA LOGIQUE D'EXÉCUTION ET DE TRACKING EFFECTIVE ICI
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
