@@ -5,8 +5,12 @@ scikit-learn
 boto3
 python-dotenv
 
+# Extensions Cloud pour Pandas (Ce qu'on ajoute !)
+fsspec
+s3fs
+
 # MLOps Tracking
 mlflow
 
-# QA & Tests (Ce qu'on ajoute pour Pytest)
+# QA & Tests
 pytest
