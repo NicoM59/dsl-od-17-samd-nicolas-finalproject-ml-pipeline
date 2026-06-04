@@ -48,7 +48,7 @@ def load_model():
     global model
     try:
         print(f"📡 Connexion à MLflow ({MLFLOW_TRACKING_URI}) pour récupérer le modèle...")
-        model_uri = "models:/MentalHealth_LinearSVC/3"
+        model_uri = "models:/MentalHealth_LinearSVC/4"
         model = mlflow.pyfunc.load_model(model_uri)
         print("✅ Modèle réel MLflow chargé en mémoire avec succès !")
     except Exception as e:

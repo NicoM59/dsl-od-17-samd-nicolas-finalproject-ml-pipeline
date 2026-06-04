@@ -1,4 +1,6 @@
 #app/train.py
+
+
 import os
 import sys
 
@@ -35,6 +37,10 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.svm import LinearSVC
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, f1_score, recall_score
+
+def tfidf_anti_float_preprocessor(x):
+    """Fonction globale acceptée par pickle pour nettoyer les types inattendus"""
+    return str(x) if not isinstance(x, str) else x
 
 # Cette mini-fonction force la conversion de chaque élément en string
 def force_string_input(X):
@@ -80,7 +86,7 @@ def create_pipeline():
             max_features=50000, 
             sublinear_tf=True,
             # 🌟 LA MAGIE EST ICI : On force la conversion en string de TOUT ce qui entre dans le TF-IDF
-            preprocessor=lambda x: str(x) if not isinstance(x, str) else x
+            preprocessor=tfidf_anti_float_preprocessor
         )),
         ("clf", LinearSVC(class_weight=custom_weights, random_state=42))
     ])
