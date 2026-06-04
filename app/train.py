@@ -1,6 +1,10 @@
-from preprocess import clean_body_text, map_canonical_category #on fait appel à preprocess.py dans le repo
-import argparse
+import sys
 import os
+root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if root_path not in sys.path:
+    sys.path.insert(0, root_path)
+from app.preprocess import clean_body_text, map_canonical_category #on fait appel à preprocess.py dans le repo
+import argparse
 import pickle
 import shutil
 from dotenv import load_dotenv
