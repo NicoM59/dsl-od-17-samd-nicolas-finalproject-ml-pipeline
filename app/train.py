@@ -128,12 +128,14 @@ if __name__ == "__main__":
         mlflow.log_input(mlflow_dataset, context="training")
         # 📝 A. Remplir la colonne DESCRIPTION
         mlflow.set_tag("mlflow.note.content", "Pipeline SVC entraîné via l'automatisation GitHub Actions après validation de la CI.")
+        mlflow.set_tag("Model_Type", "LinearSVC w/ CV")
         
         # 📊 B. Remplir la colonne DATASET (Reconstitution propre à la volée)
         try:
             # On recrée un mini-dataframe temporaire pour le notifier à MLflow
             summary_df = pd.DataFrame({"body": X, "category": y})
             mlflow_dataset = mlflow.data.from_pandas(summary_df, source=args.data_url, name="mental_health_disorder_detection")
+            
             
             print("✅ Dataset notifié avec succès dans MLflow.")
         except Exception as e:
