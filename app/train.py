@@ -24,13 +24,7 @@ try:
 except:
     pass
 
-MLFLOW_TRACKING_URI = "http://13.39.248.239:5000"
-mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
-mlflow.set_experiment("mental_health_svc_final_demo")
-
-print(f"🎯 CIBLE MLFLOW : {mlflow.get_tracking_uri()}")
-
-# Et ta fonction reste ici, elle gère le chargement S3 mais utilise les outils de preprocess.py :
+# --- LOGIQUE DE NETTOYAGE ET S3 ---
 def load_and_preprocess_data(path_or_url):
     print(f"📥 Chargement : {path_or_url}")
     df = pd.read_csv(path_or_url)
@@ -58,10 +52,18 @@ def create_pipeline():
         ("clf", LinearSVC(class_weight=custom_weights, random_state=42))
     ])
 
+# 🌟 TOUTE LA LOGIQUE D'EXÉCUTION ET DE TRACKING EFFECTIVE ICI
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_url", type=str, default="s3://dsl-od-17-samd-nicolas-finalproject/Mental Health Disorder Detection Dataset.csv")
     args = parser.parse_args()
+
+    # 🔐 CONFIGURATION MLFLOW SÉCURISÉE : Uniquement lue lors de l'entraînement, pas pendant les tests Pytest !
+    MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "http://13.39.248.239:5000")
+    mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+    mlflow.set_experiment("mental_health_svc_final_demo")
+    
+    print(f"🎯 CIBLE MLFLOW : {mlflow.get_tracking_uri()}")
 
     # PHASE 1 : Entraînement pur (100% déconnecté de MLflow)
     X, y = load_and_preprocess_data(args.data_url)
@@ -151,5 +153,5 @@ run_id: {run.info.run_id}
         except:
             pass
         
-    print(f"🎉 Entrainement Terminé ! Run enregistré sur MLFOW et artifacts déposés sur S3.")
+    print(f"🎉 Entrainement Terminé ! Run enregistré sur MLFLOW et artifacts déposés sur S3.")
     
