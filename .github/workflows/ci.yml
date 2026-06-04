@@ -57,5 +57,6 @@ jobs:
         env:
           # GitHub prend le secret et le transforme en variable d'environnement système
           MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+          PYTHONPATH: .
         run: |
           python app/train.py --data_url "s3://dsl-od-17-samd-nicolas-finalproject/Mental Health Disorder Detection Dataset.csv"
