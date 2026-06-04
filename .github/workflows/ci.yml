@@ -59,4 +59,4 @@ jobs:
           MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
           PYTHONPATH: .
         run: |
-          python app/train.py --data_url "s3://dsl-od-17-samd-nicolas-finalproject/Mental Health Disorder Detection Dataset.csv"
+          python -m app.train.py --data_url "s3://dsl-od-17-samd-nicolas-finalproject/Mental Health Disorder Detection Dataset.csv"
