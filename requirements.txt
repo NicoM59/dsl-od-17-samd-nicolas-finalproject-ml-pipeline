@@ -6,8 +6,8 @@ boto3
 python-dotenv
 
 # ☁️ Extensions Cloud pour Pandas (Lecture S3)
-fsspec>=2024.2.0
-s3fs>=2024.2.0
+fsspec==2024.2.0
+s3fs==2024.2.0
 
 # 📈 MLOps Tracking & Registry
 mlflow
