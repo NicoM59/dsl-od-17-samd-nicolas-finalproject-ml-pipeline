@@ -1,1 +1,12 @@
+# Data & ML
+pandas
+numpy
+scikit-learn
+boto3
+python-dotenv
 
+# MLOps Tracking
+mlflow
+
+# QA & Tests (Ce qu'on ajoute pour Pytest)
+pytest

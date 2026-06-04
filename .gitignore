@@ -1,5 +1,17 @@
-.ipynb_checkpoints/
-*.csv
-*.xlsx
+# Cache Python
 __pycache__/
+*.pyc
+.pytest_cache/
+
+# Environnement virtuel
+.venv/
+env/
+ds_cpu/
+
+# Variables secrètes et rapports locaux
 .env
+*.txt
+*.pkl
+*.txt.matrix
+*.pem
+temp_model_package/
