@@ -35,6 +35,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.svm import LinearSVC
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, f1_score, recall_score
+from sklearn.preprocessing import FunctionTransformer
 
 try:
     mlflow.end_run()
@@ -69,7 +70,12 @@ def create_pipeline():
         'Anxiety': 0.8396349413298566,
         'ADHD': 0.8039950062421972
     }
+    # Cette mini-fonction force la conversion de chaque élément en string
+    def force_string_input(X):
+        return [str(text) for text in X]
+
     return Pipeline([
+        ("force_str", FunctionTransformer(force_string_input, validate=False)), # 🌟 LA SÉCURITÉ ICI
         ("tfidf", TfidfVectorizer(ngram_range=(1, 2), max_features=50000, sublinear_tf=True)),
         ("clf", LinearSVC(class_weight=custom_weights, random_state=42))
     ])
