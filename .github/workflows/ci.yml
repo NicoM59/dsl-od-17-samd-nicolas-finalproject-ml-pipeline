@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main, master]
 
+  repository_dispatch:
+    types: [trigger-training]
+  workflow_dispatch:
+
 jobs:
   # JOB 1 : Exécution de la suite de tests Pytest (Vérification du code)
   run-tests:
