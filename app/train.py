@@ -1,4 +1,4 @@
-app/train.py
+#app/train.py
 import os
 import sys
 
