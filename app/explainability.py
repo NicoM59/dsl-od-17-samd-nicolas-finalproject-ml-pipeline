@@ -5,19 +5,25 @@
 import numpy as np
 
 def get_feature_importance(model, vectorizer, top_n=5):
-    # Récupérer les noms des mots (features)
+    # Sécurité : Vérifier si le modèle a été entraîné (présence de coef_)
+    if not hasattr(model, "coef_"):
+        return {"error": "Le modèle n'a pas de coefficients (probablement pas entraîné)."}
+    
+    # Sécurité : Vérifier si le vectorizer a un vocabulaire
+    if not hasattr(vectorizer, "get_feature_names_out"):
+        return {"error": "Le vectorizer est invalide."}
+
     feature_names = vectorizer.get_feature_names_out()
-    # Récupérer les coefficients appris par le LinearSVC
-    # (Note: si tu as plusieurs classes, coef_ est une matrice)
     coefficients = model.coef_.flatten()
     
-    # Trier les mots par importance
+    # Si le vocabulaire et les coefficients ne correspondent pas en taille
+    if len(feature_names) != len(coefficients):
+        return {"error": "Mismatch entre vocabulaire et poids du modèle."}
+
     top_indices = np.argsort(coefficients)[-top_n:]
     bottom_indices = np.argsort(coefficients)[:top_n]
     
-    # Créer un dictionnaire simple
-    important_features = {
-        "positifs": [(feature_names[i], coefficients[i]) for i in reversed(top_indices)],
-        "negatifs": [(feature_names[i], coefficients[i]) for i in bottom_indices]
+    return {
+        "positifs": [(feature_names[i], float(coefficients[i])) for i in reversed(top_indices)],
+        "negatifs": [(feature_names[i], float(coefficients[i])) for i in bottom_indices]
     }
-    return important_features
