@@ -48,6 +48,12 @@ class MockModel:
         classes = ["ADHD", "Anxiety", "Autism", "BPD", "Bipolar", "Depression", "schizophrenia"]
         text_hash = int(hashlib.md5(str(texts[0]).strip().encode('utf-8')).hexdigest(), 16)
         return [classes[text_hash % len(classes)]]
+    
+    # Eviter les erreurs 500
+    def decision_function(self, texts):
+        # Retourne une liste de scores factices (par exemple 0.5 pour chaque texte)
+        # On renvoie une liste de la même taille que les entrées
+        return [0.5] * len(texts)
 
 # ==============================================================================
 # ☁️ LOGIQUE ROUTEUR MLFLOW -> S3
@@ -153,6 +159,8 @@ def predict(payload: PredictionInput):
         # Conversion en pourcentage entier (0 à 100)
         conf_percentage = int(probability * 100)
 
+        api_url = os.getenv("API_URL", "http://localhost:8000") 
+               
         return {
             "input_text": payload.text,
             "predicted_disorder": str(prediction[0]),

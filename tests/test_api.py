@@ -29,6 +29,12 @@ def test_predict_valid_text(client):
     payload = {"text": "I feel quite stressed and tired lately."}
     response = client.post("/predict", json=payload)
     
+    if response.status_code == 500:
+        print("\n--- ERREUR DÉTECTÉE ---")
+        print(response.json()) # Souvent, FastAPI renvoie le détail de l'erreur ici
+        print("------------------------\n")
+
+    
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "success"
