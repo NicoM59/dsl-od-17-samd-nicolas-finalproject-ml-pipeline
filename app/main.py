@@ -142,6 +142,8 @@ def load_model():
         
         # Joblib respecte notre hack, lui !
         model = joblib.load(model_file)
+        print(f"DEBUG - Pipeline steps: {list(model.named_steps.keys())}")
+        
         print("✅ Modèle 'latest' téléchargé et chargé avec succès !")
     except Exception as e:
         print(f"❌ Échec du chargement : {e}")
