@@ -147,7 +147,7 @@ def save_request_to_s3(payload: dict):
         
         s3.put_object(
             # ⚠️ Remplace par ton vrai nom
-            Bucket="dsl-od-17-samd-nicolas-finalproject" 
+            Bucket="dsl-od-17-samd-nicolas-finalproject", 
             Key=file_key,
             Body=json.dumps(payload),
             ContentType="application/json"
