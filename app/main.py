@@ -6,6 +6,8 @@ import joblib
 import hashlib
 import mlflow
 import numpy as np
+import uuid
+from datetime import datetime
 from mlflow.tracking import MlflowClient
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -129,8 +131,31 @@ def load_model():
         model = None
 
 # ==============================================================================
-# 🚦 ENDPOINTS
+# 🚦 ENDPOINTS & SAUVEGARDE DES REQUETES SUR S3
 # ==============================================================================
+def save_request_to_s3(payload: dict):
+    """Envoie la requête utilisateur sur S3 pour le futur ETL."""
+    try:
+        s3 = boto3.client(
+            "s3",
+            aws_access_key_id=AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+            region_name=AWS_REGION
+        )
+        # Nom du fichier : json_queries/AAAA/MM/JJ/uuid.json
+        file_key = f"json_queries/{datetime.now().strftime('%Y/%m/%d')}/{uuid.uuid4()}.json"
+        
+        s3.put_object(
+            # ⚠️ Remplace par ton vrai nom
+            Bucket="dsl-od-17-samd-nicolas-finalproject" 
+            Key=file_key,
+            Body=json.dumps(payload),
+            ContentType="application/json"
+        )
+    except Exception as e:
+        print(f"❌ Erreur S3 : {e}")
+
+
 class PredictionInput(BaseModel):
     text: str
 
@@ -143,7 +168,7 @@ def home():
     }
 
 @app.post("/predict")
-def predict(payload: PredictionInput):
+def predict(payload: PredictionInput, background_tasks: BackgroundTasks):
     if model is None:
         raise HTTPException(status_code=503, detail="Modèle indisponible.")
     if not payload.text.strip():
@@ -166,6 +191,17 @@ def predict(payload: PredictionInput):
         conf_percentage = int(probability * 100)
 
         api_url = os.getenv("API_URL", "http://localhost:8000") 
+           
+        # 1. On prépare les données de log
+        log_data = {
+            "input_text": payload.text,
+            "predicted_disorder": str(prediction[0]),
+            "probability": conf_percentage,
+            "timestamp": datetime.now().isoformat()
+        }
+
+    # 2. On déclenche la tâche de fond (elle se lancera en parallèle)
+        background_tasks.add_task(save_request_to_s3, log_data)   
                
         return {
             "input_text": payload.text,
@@ -174,5 +210,7 @@ def predict(payload: PredictionInput):
             "status": "success",
             "api_source": api_url
         }
+        
+        
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
