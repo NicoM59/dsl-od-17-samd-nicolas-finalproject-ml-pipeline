@@ -77,5 +77,7 @@ jobs:
       - name: 🏋️ Lancement de l'entraînement lourd et Envoi vers MLflow
         env:
           MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+          DATASET_PATH: ${{ vars.DATASET_PATH }} # 🌟 Ici, on appelle la variable GitHub
         run: |
-          python -u -m app.train --data_url "s3://dsl-od-17-samd-nicolas-finalproject/Mental Health Disorder Detection Dataset.csv"
+          # Ton script train.py va maintenant lire DATASET_PATH via os.getenv()
+          python -u -m app.train

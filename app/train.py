@@ -17,9 +17,17 @@ from sklearn.metrics import classification_report, confusion_matrix, accuracy_sc
 import joblib  # 🌟 Utilisation de joblib pour une meilleure sérialisation
 from app.preprocess import clean_body_text, map_canonical_category
 
+# On récupère le chemin depuis l'environnement
+
+
 # ==============================================================================
-# 🛠️ SÉCURITÉ ABSOLUE POUR LES CHEMINS EN ENVIRONNEMENT LINUX / CI-CD
+# 🛠️ SÉCURITÉ ABSOLUE POUR LES CHEMINS EN ENVIRONNEMENT LINUX / CI-CD & SERIALISATION DU DATASET
 # ==============================================================================
+dataset_path = os.getenv("DATASET_PATH")
+
+if not dataset_path:
+    raise ValueError("La variable DATASET_PATH n'est pas définie !")
+
 current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.abspath(os.path.join(current_dir, ".."))
 if project_root not in sys.path:
@@ -188,11 +196,20 @@ def create_pipeline():
 print("🏋️‍♂️ Création du pipeline terminée...")
 # 🌟 TOUTE LA LOGIQUE D'EXÉCUTION ET DE TRACKING EFFECTIVE ICI
 if __name__ == "__main__":
-    print("🚀 [LOG CI] Le script train.py vient de démarrer avec succès !")
-    
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data_url", type=str, default="s3://dsl-od-17-samd-nicolas-finalproject/Mental Health Disorder Detection Dataset.csv")
+    # 1. On ne met pas de valeur par défaut ici, ou alors une valeur générique
+    parser.add_argument("--data_url", type=str, help="URL S3 du dataset")
     args = parser.parse_args()
+
+    # 2. La priorité : 
+    # - Si l'utilisateur passe --data_url dans la commande, on utilise celui-là.
+    # - Sinon, on utilise la variable d'environnement.
+    final_data_url = args.data_url or os.getenv("DATASET_PATH")
+
+    if not final_data_url:
+        raise ValueError("Aucun dataset trouvé : spécifiez --data_url ou définissez DATASET_PATH")
+        
+    print(f"🚀 Démarrage avec le dataset : {final_data_url}")
 
     # 🔐 CONFIGURATION MLFLOW SÉCURISÉE : Uniquement lue lors de l'entraînement, pas pendant les tests Pytest !
     MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "http://13.39.248.239:5000")
