@@ -9,7 +9,7 @@ import numpy as np
 import uuid
 from datetime import datetime
 from mlflow.tracking import MlflowClient
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, BackgroundTasks
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
