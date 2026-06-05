@@ -16,6 +16,10 @@ def get_feature_importance(model, vectorizer, top_n=5):
     feature_names = vectorizer.get_feature_names_out()
     coefficients = model.coef_.flatten()
     
+    # DEBUG CRUCIAL
+    print(f"DEBUG: Nombre de features (vocabulaire) : {len(feature_names)}")
+    print(f"DEBUG: Nombre de coefficients (modèle) : {len(coefficients)}")
+    
     # Si le vocabulaire et les coefficients ne correspondent pas en taille
     if len(feature_names) != len(coefficients):
         return {"error": "Mismatch entre vocabulaire et poids du modèle."}
