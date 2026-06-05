@@ -201,6 +201,16 @@ def predict(payload: PredictionInput, background_tasks: BackgroundTasks):
         tfidf_step = model.named_steps['tfidf']
         clf_step = model.named_steps['clf']
         
+        
+        # Debug de sécurité
+        print(f"DEBUG: Type of clf_step: {type(clf_step)}")
+        # Si c'est un Pipeline imbriqué ou autre, on adapte
+        if hasattr(clf_step, 'coef_'):
+            importance = get_feature_importance(clf_step, tfidf_step)
+        else:
+            # Cas rare : le classifieur est encapsulé ailleurs
+            importance = {"error": "Impossible d'extraire les poids du modèle"}
+            
         # 3. On appelle la fonction pour avoir les explications
         importance = get_feature_importance(clf_step, tfidf_step)
         
