@@ -23,11 +23,6 @@ from app.preprocess import clean_body_text, map_canonical_category
 # ==============================================================================
 # 🛠️ SÉCURITÉ ABSOLUE POUR LES CHEMINS EN ENVIRONNEMENT LINUX / CI-CD & SERIALISATION DU DATASET
 # ==============================================================================
-dataset_path = os.getenv("DATASET_PATH")
-
-if not dataset_path:
-    raise ValueError("La variable DATASET_PATH n'est pas définie !")
-
 current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.abspath(os.path.join(current_dir, ".."))
 if project_root not in sys.path:
@@ -43,6 +38,12 @@ except Exception:
     # Provide a no-op fallback when python-dotenv is not installed (e.g. in CI linting)
     def load_dotenv(*args, **kwargs):
         return None
+
+dataset_path = os.getenv("DATASET_PATH")
+
+if not dataset_path:
+    raise ValueError("La variable DATASET_PATH n'est pas définie !")
+
 
 # mlflow is optional in some environments (linters / CI without package).
 # Provide a lightweight dummy shim when mlflow cannot be imported so the
