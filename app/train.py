@@ -231,7 +231,7 @@ if __name__ == "__main__":
 
     # PHASE 1 : Entraînement pur (100% déconnecté de MLflow)
     print("📥 [LOG CI] Début du téléchargement des données depuis S3...")
-    X, y,mlflow_dataset = load_and_preprocess_data(args.data_url)
+    X, y,mlflow_dataset = load_and_preprocess_data(final_data_url)
     print(f"📊 [LOG CI] Données chargées avec succès ! Taille du dataset : {len(X)} lignes.")
     
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
