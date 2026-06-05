@@ -56,16 +56,29 @@ model = None
 # ==============================================================================
 # 🧪 MOCK MODEL POUR PYTEST
 # ==============================================================================
+# 1. On crée une classe pour simuler le vectorizer (pour que .get_feature_names_out() fonctionne)
+class MockVectorizer:
+    def get_feature_names_out(self):
+        return ["mot1", "mot2", "mot3", "mot4", "mot5"]
+
+# 2. On crée une classe pour simuler le classifieur (pour que .coef_ fonctionne)
+class MockClassifier:
+    def __init__(self):
+        self.coef_ = np.array([[0.1, 0.2, 0.3, 0.4, 0.5]]) # Doit correspondre à la taille du vocab
+
+# 3. On met à jour le MockModel pour qu'il ait des 'named_steps'
 class MockModel:
+    def __init__(self):
+        self.named_steps = {
+            "tfidf": MockVectorizer(),
+            "clf": MockClassifier()
+        }
+        
     def predict(self, texts):
-        classes = ["ADHD", "Anxiety", "Autism", "BPD", "Bipolar", "Depression", "schizophrenia"]
-        text_hash = int(hashlib.md5(str(texts[0]).strip().encode('utf-8')).hexdigest(), 16)
-        return [classes[text_hash % len(classes)]]
+        return ["Depression"]
     
     def decision_function(self, texts):
-        # Simule une matrice (1 échantillon, 7 classes)
-        # Cela correspond au comportement du LinearSVC avec 7 classes
-        return np.array([[0.1, 0.2, 0.3, 0.8, 0.1, 0.2, 0.1]])
+        return np.array([[0.5]])
 
 # ==============================================================================
 # ☁️ LOGIQUE ROUTEUR MLFLOW -> S3
