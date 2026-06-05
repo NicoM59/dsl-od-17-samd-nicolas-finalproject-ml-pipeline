@@ -15,6 +15,9 @@ jobs:
   # ============================================================================
   run-tests:
     runs-on: ubuntu-latest
+    env:
+      DATASET_PATH: ${{ vars.DATASET_PATH }}
+
     steps:
       - name: 📥 Récupérer le code du dépôt
         uses: actions/checkout@v3

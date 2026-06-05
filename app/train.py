@@ -8,6 +8,13 @@ import pickle
 import argparse
 import pandas as pd
 import numpy as np
+from dotenv import load_dotenv
+load_dotenv()
+def get_dataset_path():
+    path = os.getenv("DATASET_PATH")
+    if not path:
+        raise ValueError("La variable DATASET_PATH n'est pas définie !")
+    return path
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import FunctionTransformer
@@ -36,13 +43,13 @@ try:
     from dotenv import load_dotenv
 except Exception:
     # Provide a no-op fallback when python-dotenv is not installed (e.g. in CI linting)
-    def load_dotenv(*args, **kwargs):
-        return None
-
-dataset_path = os.getenv("DATASET_PATH")
-
-if not dataset_path:
-    raise ValueError("La variable DATASET_PATH n'est pas définie !")
+    # --- APRÈS (la solution) ---
+    def get_dataset_path():
+        path = os.getenv("DATASET_PATH")
+        if not path:
+            # On ne lève l'erreur QUE si on en a vraiment besoin
+            raise ValueError("La variable DATASET_PATH n'est pas définie !")
+        return path
 
 
 # mlflow is optional in some environments (linters / CI without package).
