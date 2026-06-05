@@ -15,3 +15,6 @@ ds_cpu/
 *.txt.matrix
 *.pem
 temp_model_package/
+
+# On ignore le dépôt Hugging Face imbriqué
+hf_deployment_space/

@@ -13,8 +13,8 @@ st.set_page_config(
 )
 
 # 🔗 URL de l'API (À modifier avec ton URL Render une fois prête)
-API_URL = "http://127.0.0.1:8000"
-# API_URL = "https://mental-health-api-nicolas-samd.onrender.com"  
+# API_URL = "http://127.0.0.1:8000"
+API_URL = "https://mental-health-api-nicolas-samd.onrender.com"  
 
 # ==========================================
 # 2. BARRE LATÉRALE (SIDEBAR)

@@ -157,7 +157,8 @@ def predict(payload: PredictionInput):
             "input_text": payload.text,
             "predicted_disorder": str(prediction[0]),
             "probability": conf_percentage, # On envoie le pourcentage
-            "status": "success"
+            "status": "success",
+            "api_source": api_url
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
