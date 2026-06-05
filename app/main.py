@@ -62,11 +62,10 @@ class MockModel:
         text_hash = int(hashlib.md5(str(texts[0]).strip().encode('utf-8')).hexdigest(), 16)
         return [classes[text_hash % len(classes)]]
     
-    # Eviter les erreurs 500
     def decision_function(self, texts):
-        # Retourne une liste de scores factices (par exemple 0.5 pour chaque texte)
-        # On renvoie une liste de la même taille que les entrées
-        return [0.5] * len(texts)
+        # Simule une matrice (1 échantillon, 7 classes)
+        # Cela correspond au comportement du LinearSVC avec 7 classes
+        return np.array([[0.1, 0.2, 0.3, 0.8, 0.1, 0.2, 0.1]])
 
 # ==============================================================================
 # ☁️ LOGIQUE ROUTEUR MLFLOW -> S3
