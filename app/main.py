@@ -14,6 +14,12 @@ from dotenv import load_dotenv
 # Charge les variables d'environnement
 load_dotenv()
 
+# Si API_URL est défini dans le système, il l'utilise. 
+# Sinon, il prend "http://localhost:8000" par défaut.
+API_URL = os.getenv("API_URL", "http://localhost:8000")
+
+print(f"Connexion à l'API sur : {API_URL}")
+
 # ==============================================================================
 # 🌟 LE HACK DE GÉNIE POUR JOBLIB (Infaillible)
 # ==============================================================================
