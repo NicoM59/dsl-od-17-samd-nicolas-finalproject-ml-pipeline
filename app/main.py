@@ -12,7 +12,11 @@ from datetime import datetime
 from mlflow.tracking import MlflowClient
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from pydantic import BaseModel
+from sklearn.feature_extraction.text import TfidfVectorizer
+from app.explainability import get_feature_importance # Appel fonction Explicability
 from dotenv import load_dotenv
+
+
 
 # Charge les variables d'environnement
 load_dotenv()
@@ -179,6 +183,13 @@ def predict(payload: PredictionInput, background_tasks: BackgroundTasks):
         # 1. Prédiction
         prediction = model.predict([payload.text])
         
+        # Extraction des éléments pour l'explicabilité
+        tfidf_step = model.named_steps['tfidf']
+        clf_step = model.named_steps['clf']
+        
+        # 3. On appelle la fonction pour avoir les explications
+        importance = get_feature_importance(clf_step, tfidf_step)
+        
         # 2. Calcul du score de confiance (Sigmoïde)
         # decision_function donne la distance à la frontière de décision
         raw_scores = model.decision_function([payload.text])
@@ -207,6 +218,7 @@ def predict(payload: PredictionInput, background_tasks: BackgroundTasks):
         return {
             "input_text": payload.text,
             "predicted_disorder": str(prediction[0]),
+            "explanation": importance,
             "probability": conf_percentage, # On envoie le pourcentage
             "status": "success",
             "api_source": api_url
