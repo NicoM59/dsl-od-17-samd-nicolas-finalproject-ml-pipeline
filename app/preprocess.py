@@ -9,6 +9,10 @@ CANONICAL_LABELS = {
     "schizophrenia": "schizophrenia", "schizo": "schizophrenia", "schizoaffective": "schizophrenia"
 }
 
+CANONICAL_CLASS_LIST = [
+    "ADHD", "Anxiety", "Autism", "BPD", "Bipolar", "Depression", "schizophrenia"
+]
+
 def clean_body_text(text):
     """Nettoie le texte brut d'un post (Testable par Pytest sans S3)"""
     return str(text).strip()

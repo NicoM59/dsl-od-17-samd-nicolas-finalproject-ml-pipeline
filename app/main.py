@@ -14,6 +14,7 @@ from fastapi import FastAPI, HTTPException, BackgroundTasks
 from pydantic import BaseModel
 from sklearn.feature_extraction.text import TfidfVectorizer
 from app.explainability import get_feature_importance # Appel fonction Explicability
+from app.preprocess import CANONICAL_CLASS_LIST # Assure-toi que ta liste est accessible ici
 from dotenv import load_dotenv
 
 
@@ -197,6 +198,10 @@ def predict(payload: PredictionInput, background_tasks: BackgroundTasks):
         # 1. Prédiction
         prediction = model.predict([payload.text])
         
+        Sécurisation : on récupère le premier élément et on force en string
+        
+        pred_name = str(prediction[0])
+        
         # Extraction des éléments pour l'explicabilité
         tfidf_step = model.named_steps['tfidf']
         clf_step = model.named_steps['clf']
@@ -212,8 +217,12 @@ def predict(payload: PredictionInput, background_tasks: BackgroundTasks):
             importance = {"error": "Impossible d'extraire les poids du modèle"}
             
         # 3. On appelle la fonction pour avoir les explications
-        importance = get_feature_importance(clf_step, tfidf_step)
-        
+        importance = get_feature_importance(
+            clf_step, 
+            tfidf_step, 
+            target_class_name=pred_name, 
+            class_names=CANONICAL_CLASS_LIST # On passe la liste officielle ici
+)        
         # 2. Calcul du score de confiance (Sigmoïde)
         # decision_function donne la distance à la frontière de décision
         raw_scores = model.decision_function([payload.text])
