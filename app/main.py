@@ -198,7 +198,7 @@ def predict(payload: PredictionInput, background_tasks: BackgroundTasks):
         # 1. Prédiction
         prediction = model.predict([payload.text])
         
-        Sécurisation : on récupère le premier élément et on force en string
+        #Sécurisation : on récupère le premier élément et on force en string
         
         pred_name = str(prediction[0])
         
