@@ -62,10 +62,16 @@ class MockVectorizer:
     def get_feature_names_out(self):
         return ["mot1", "mot2", "mot3", "mot4", "mot5"]
 
-# 2. On crée une classe pour simuler le classifieur (pour que .coef_ fonctionne)
+# 2. On crée une classe pour simuler le classifieur
 class MockClassifier:
     def __init__(self):
-        self.coef_ = np.array([[0.1, 0.2, 0.3, 0.4, 0.5]]) # Doit correspondre à la taille du vocab
+        # On simule 7 classes (pour correspondre à ton vrai modèle) 
+        # et un vocabulaire de 5 mots
+        self.coef_ = np.random.rand(7, 5) 
+        
+    # Ajoute aussi cette méthode souvent utilisée par get_feature_importance
+    def get_params(self, deep=True):
+        return {}b
 
 # 3. On met à jour le MockModel pour qu'il ait des 'named_steps'
 class MockModel:
