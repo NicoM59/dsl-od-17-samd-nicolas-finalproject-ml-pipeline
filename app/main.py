@@ -163,6 +163,7 @@ def save_request_to_s3(payload: dict):
             region_name=AWS_REGION
         )
         # Nom du fichier : json_queries/AAAA/MM/JJ/uuid.json
+        #note pour plus tard : supprimer {datetime.now().strftime('%Y/%m/%d')} étant donné qu'on a un timestamps sur le json
         file_key = f"json_queries/{datetime.now().strftime('%Y/%m/%d')}/{uuid.uuid4()}.json"
         
         s3.put_object(
