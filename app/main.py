@@ -71,7 +71,7 @@ class MockClassifier:
         
     # Ajoute aussi cette méthode souvent utilisée par get_feature_importance
     def get_params(self, deep=True):
-        return {}b
+        return {}
 
 # 3. On met à jour le MockModel pour qu'il ait des 'named_steps'
 class MockModel:
