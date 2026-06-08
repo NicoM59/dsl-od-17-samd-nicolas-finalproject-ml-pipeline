@@ -62,7 +62,7 @@ class MockVectorizer:
     def get_feature_names_out(self):
         return ["mot1", "mot2", "mot3", "mot4", "mot5"]
 
-# 2. On crée une classe pour simuler le classifieur
+# 2. On crée une classe pour simuler le classifieur#
 class MockClassifier:
     def __init__(self):
         # On simule 7 classes (pour correspondre à ton vrai modèle) 
