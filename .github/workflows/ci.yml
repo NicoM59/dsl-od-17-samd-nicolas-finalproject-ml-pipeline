@@ -11,7 +11,7 @@ on:
 
 jobs:
   # ============================================================================
-  # JOB 1 : Exécution de la suite de tests (Séparés par typologie)
+  # JOB 1 : Exécution de la suite de tests (Ordonnés du plus rapide au plus long)
   # ============================================================================
   run-tests:
     runs-on: ubuntu-latest
@@ -31,15 +31,18 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest httpx  # On s'assure que httpx est là pour TestClient
+          pip install pytest httpx mlflow requests  # On s'assure d'avoir tout pour les tests
 
       # ----------------------------------------------------------------------
-      # 🧪 PHASE 1 : Les tests du Modèle et de la Donnée
+      # 📡 PHASE 1 : Test de l'Infrastructure (Health Check EC2 -> Neon)
       # ----------------------------------------------------------------------
-      - name: 🧠 Tester le Modèle et le Preprocessing
-        # Ici, remplace "tests/test_model.py" par le nom de ton ancien fichier de test
+      - name: 🗄️ Vérifier l'Infrastructure (EC2 & Neon DB)
+        env:
+          # On passe l'URL magique à pytest pour qu'il puisse faire le ping
+          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
         run: |
-          pytest tests/test_pipeline.py -v
+          # Le -s permet d'afficher les superbes "prints" qu'on a codés ensemble
+          pytest -s tests/test_infra.py -v
 
       # ----------------------------------------------------------------------
       # 🌐 PHASE 2 : Les tests de l'API FastAPI
@@ -50,12 +53,19 @@ jobs:
         run: |
           pytest tests/test_api.py -v
 
+      # ----------------------------------------------------------------------
+      # 🧪 PHASE 3 : Les tests du Modèle, de la Donnée et du Preprocessing
+      # ----------------------------------------------------------------------
+      - name: 🧠 Tester le Modèle et le Preprocessing
+        run: |
+          pytest tests/test_pipeline.py -v
+
   # ============================================================================
-  # JOB 2 : Réentraînement automatique (Uniquement si JOB 1 a réussi)
+  # JOB 2 : Réentraînement automatique (Uniquement si TOUS les tests du JOB 1 ont réussi)
   # ============================================================================
   auto-train-model:
     runs-on: ubuntu-latest
-    needs: run-tests # 🚦 Condition magique : attend le succès des tests
+    needs: run-tests # 🚦 Condition magique : attend le succès de TOUS les tests ci-dessus
     steps:
       - name: 📥 Récupérer le code du dépôt
         uses: actions/checkout@v3
@@ -80,7 +90,7 @@ jobs:
       - name: 🏋️ Lancement de l'entraînement lourd et Envoi vers MLflow
         env:
           MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
-          DATASET_PATH: ${{ vars.DATASET_PATH }} # 🌟 Ici, on appelle la variable GitHub
+          DATASET_PATH: ${{ vars.DATASET_PATH }} # 🌟 Appel de la variable GitHub
         run: |
           # Ton script train.py va maintenant lire DATASET_PATH via os.getenv()
           python -u -m app.train
