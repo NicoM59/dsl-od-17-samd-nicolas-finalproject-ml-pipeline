@@ -21,6 +21,7 @@ from sklearn.preprocessing import FunctionTransformer
 from sklearn.svm import LinearSVC
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, f1_score, recall_score
+from app.preprocess import lemmatize_body_text
 import joblib  # 🌟 Utilisation de joblib pour une meilleure sérialisation
 from app.preprocess import clean_body_text, map_canonical_category
 
@@ -169,9 +170,8 @@ def load_and_preprocess_data(path_or_url):
     print("📥 Appel de preprocess.py")
     # Étape de nettoyage qui utilise les fonctions déportées
     df = df.dropna(subset=['body', 'category']).copy()
-    df['body'] = df['body'].apply(clean_body_text)
+    df['body'] = df['body'].apply(lemmatize_body_text)    
     df['category'] = df['category'].apply(map_canonical_category)
-    
     df = df.dropna(subset=['category'])
     mlflow_dataset = mlflow.data.from_pandas(df, source=path_or_url, name="mental_health_disorder_detection")
     return df['body'], df['category'], mlflow_dataset

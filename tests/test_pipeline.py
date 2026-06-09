@@ -56,6 +56,26 @@ def test_handle_nan_values():
 )
 def test_all_canonical_labels_parametrize(input_label, expected_output):
     assert map_canonical_category(input_label) == expected_output
+    
+    
+def test_lemmatize_body_text_advanced():
+    """🧪 Test unitaire de la nouvelle brique NLP de lemmatisation advanced V2"""
+    from app.preprocess import lemmatize_body_text
+    
+    # Test 1 : Cas nominal avec majuscules, stop words et ponctuation
+    text_brut = "The doctors are telling me that my anxieties are growing!"
+    text_attendu = "doctor telling anxiety growing"
+    assert lemmatize_body_text(text_brut) == text_attendu
+    
+    # Test 2 : Gestion des liens URL (ils doivent disparaître)
+    text_avec_url = "Check this out https://google.com or www.reddit.com help"
+    assert lemmatize_body_text(text_avec_url) == "check help"
+    
+    # Test 3 : Gestion des chaînes vides ou None
+    assert lemmatize_body_text("") == ""
+    assert lemmatize_body_text(None) == ""    
+    
+    
 
 # --- TEST DU MODÈLE (END-TO-END) ---
 @pytest.mark.fast  # Marqueur comme dans ton cours

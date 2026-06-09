@@ -21,3 +21,6 @@ watchfiles
 # 🧪 QA, Tests & Inférence Client
 pytest>=7.0.0
 httpx>=0.23.0
+
+# Lemmatization
+nltk==3.8.1
