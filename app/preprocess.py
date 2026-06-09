@@ -7,16 +7,11 @@ from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 
 # 📋 Téléchargement sécurisé des briques NLTK pour le Runner GitHub et Render
-try:
-    nltk.data.find('tokenizers/punkt')
-    nltk.data.find('tokenizers/punkt_tab')  # 🌟 Ajout de la vérification de la nouvelle ressource
-    nltk.data.find('corpora/stopwords')
-    nltk.data.find('corpora/wordnet')
-except LookupError:
-    nltk.download('punkt', quiet=True)
-    nltk.download('punkt_tab', quiet=True)  # 🌟 Force le téléchargement si manquant
-    nltk.download('stopwords', quiet=True)
-    nltk.download('wordnet', quiet=True)
+
+nltk.download('punkt', quiet=True)
+nltk.download('punkt_tab', quiet=True)  # 🌟 Force le téléchargement si manquant
+nltk.download('stopwords', quiet=True)
+nltk.download('wordnet', quiet=True)
 
 CANONICAL_LABELS = {
     "adhd": "ADHD", "add": "ADHD", "anxiety": "Anxiety",
