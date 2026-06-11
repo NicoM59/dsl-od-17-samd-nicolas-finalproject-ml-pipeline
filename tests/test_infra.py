@@ -5,6 +5,16 @@ import mlflow
 def test_mlflow_and_neon_are_up():
     """Vérifie que le serveur MLflow sur EC2 répond et que son backend store Neon est accessible."""
     
+    
+    print("""
+=========================================================
+ ___  ____ ____    ___  ____    ___  _  _ ____    ____ _  _ ___ 
+ |__] |__| [__     |  \ |___    |__] |  | | __    [__  |  | |__]
+ |    |  | ___]    |__/ |___    |__] |__| |__]    ___]  \/  |   
+=========================================================
+""")
+    
+    
     print("\n" + "=" * 60)
     print("🚀 RUNNER GITHUB : DÉMARRAGE DU TEST D'INTEGRATION INFRASTRUCTURE")
     print("=" * 60)
